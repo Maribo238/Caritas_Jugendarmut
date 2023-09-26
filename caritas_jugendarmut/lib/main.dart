@@ -1,7 +1,20 @@
+import 'dart:html';
+import 'dart:js_util';
+
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
+  var Hello = ["Test", "TEST2", "Hello World"];
+  print(faculty(5));
+  Hello.where((element) => element.contains('e')).forEach(print);
+}
+
+int faculty(int number) {
+  if (number == 1) {
+    return number;
+  }
+  return number + faculty(number - 1);
 }
 
 class MyApp extends StatelessWidget {
