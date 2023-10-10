@@ -1,11 +1,13 @@
 //import 'dart:html';
 //import 'dart:js_util';
 //Shared_Prefrences: flutter pub add shared_prefrences
-import 'package:flutter/foundation.dart';
-import 'package:flutter/rendering.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:english_words/english_words.dart';
+import 'package:caritas_jugendarmut/pages/favorites_page.dart';
+import 'package:caritas_jugendarmut/pages/generator_page.dart';
+import 'package:caritas_jugendarmut/my_app_state.dart';
+import 'package:caritas_jugendarmut/pages/new_page.dart';
+import 'package:caritas_jugendarmut/pages/setting_page.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,34 +35,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  var favorites = <WordPair>[];
-  var current = WordPair.random();
-
-  List getFavoritesList() {
-    return favorites;
-  }
-
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-
-  void removeFavorite() {
-    favorites.remove(current);
-    notifyListeners();
-  }
-
-  void addFavorite() {
-    favorites.contains(current) ? removeFavorite() : favorites.add(current);
-    notifyListeners();
-  }
-
-  String getText() {
-    return current.asString;
-  }
-}
-
 class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -72,10 +46,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void selectPage() {
     switch (selectedIndex) {
-      case 0:
-        page = GeneratorPage();
       case 1:
+        page = GeneratorPage();
+      case 0:
         page = FavoritesPage();
+      case 2:
+        page = NewPage();
       default:
         throw UnimplementedError('No Widget for $selectedIndex');
     }
@@ -86,129 +62,40 @@ class _MyHomePageState extends State<MyHomePage> {
     selectPage();
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
-        body: Row(children: [
-          SafeArea(
-            child: NavigationRail(
-              extended: constraints.maxWidth >= 600,
-              destinations: [
-                NavigationRailDestination(
-                  icon: Icon(Icons.home),
-                  label: Text("Home"),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.favorite),
-                  label: Text("Favorites"),
-                )
-              ],
-              selectedIndex: selectedIndex,
-              onDestinationSelected: (value) {
-                setState(() {
-                  selectedIndex = value;
-                });
-              },
-            ),
-          ),
+        body: Column(children: [
           Expanded(
             child: Container(
               color: Theme.of(context).colorScheme.primaryContainer,
               child: page,
             ),
           ),
+          SafeArea(
+            child: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite),
+                  label: "Favorites",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: "Home",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  label: "Settings",
+                ),
+              ],
+              currentIndex: selectedIndex,
+              onTap: (value) {
+                setState(() {
+                  selectedIndex = value;
+                });
+              },
+            ),
+          ),
+          //Falls über Laptop: Navigations Rail sinnvoll!
         ]),
       );
     });
-  }
-}
-
-class GeneratorPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
-    IconData likeIcon = appState.favorites.contains(pair)
-        ? Icons.favorite
-        : Icons.favorite_border;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                  onPressed: () {
-                    print(appState.getText());
-                    appState.addFavorite();
-                  },
-                  icon: Icon(likeIcon),
-                  label: Text("Like")),
-              SizedBox(width: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    appState.getNext();
-                  },
-                  child: Text('Change Text')),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class FavoritesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var favorites = appState.favorites;
-
-    if (favorites.isEmpty) {
-      return Center(
-        child: Text('No Favorites yet'),
-      );
-    }
-
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text('You have ${favorites.length} Favorites'),
-        ),
-        for (WordPair element in favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(element.asString),
-          ),
-      ],
-    );
-  }
-}
-
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
-
-  final WordPair pair;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Text(pair.asLowerCase, style: style),
-      ),
-    );
   }
 }
