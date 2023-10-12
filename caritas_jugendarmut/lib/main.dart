@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = FavoritesPage();
       case 2:
-        page = NewPage();
+        page = SettingPage();
       default:
         throw UnimplementedError('No Widget for $selectedIndex');
     }

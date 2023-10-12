@@ -8,10 +8,57 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var favorites = appState.favorites;
+    final theme = Theme.of(context);
 
     if (favorites.isEmpty) {
-      return Center(
-        child: Text('No Favorites yet'),
+      return Column(
+        children: [
+          Container(
+            height: 130,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(50),
+              ),
+              color: theme.colorScheme.primary,
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 15,
+                  left: 0,
+                  child: Container(
+                    height: 100,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(50),
+                        bottomRight: Radius.circular(50),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  child: Text(
+                    "Favorites",
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          Center(
+            child: Text('No Favorites yet'),
+          ),
+        ],
       );
     }
 
