@@ -160,7 +160,8 @@ void _incrementCounter(int x) {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         20, 0, 20, 0),
                                     child: TextFormField(
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.numberWithOptions(
+                                          decimal: true),
                                       inputFormatters: <TextInputFormatter>[
                                         FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
                                       ],
@@ -248,7 +249,8 @@ void _incrementCounter(int x) {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         20, 30, 20, 0),
                                     child: TextFormField(
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.numberWithOptions(
+                                          decimal: true),
                                       controller: _model.textController2,
                                       inputFormatters: <TextInputFormatter>[
                                         FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
