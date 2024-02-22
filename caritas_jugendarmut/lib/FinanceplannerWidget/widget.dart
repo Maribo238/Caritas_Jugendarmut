@@ -15,17 +15,16 @@ class FinanzplanerWidget extends StatefulWidget {
 class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
     with TickerProviderStateMixin {
   late FinanzplanerModel _model;
-int selectedValue = 50;
-void _incrementCounter(int x) {
+double selectedValue = 50;
+double einnahmen = 0;
+double ausgaben = 0;
+void verrechnen() {
     setState(() {
-      selectedValue= selectedValue + x;
+      selectedValue= selectedValue + einnahmen - ausgaben;
+      selectedValue =  double.parse(selectedValue.toStringAsFixed(2));
     });
   }
-  void _decrementCounter(int x) {
-    setState(() {
-      selectedValue= selectedValue - x;
-    });
-  }
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final animationsMap = {
@@ -164,6 +163,17 @@ void _incrementCounter(int x) {
                                       inputFormatters: <TextInputFormatter>[
                                         FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
                                       ],
+                                      onChanged: (value) {// Den String bereinigen: Währungssymbol und Eurozeichen entfernen
+  String cleanedValue = value.replaceAll('€', '');
+  cleanedValue=cleanedValue.replaceAll(',', '.');
+
+
+  // Versuche den bereinigten String in eine Dezimalzahl umzuwandeln
+  double parsedValue = double.tryParse(cleanedValue) ?? 0.0;
+
+
+  // Weise den Wert der Variable einnahmen zu
+  einnahmen = parsedValue; }, 
                                       controller: _model.textController1,
                                       focusNode: _model.textFieldFocusNode1,
                                       autofocus: true,
@@ -253,6 +263,17 @@ void _incrementCounter(int x) {
                                       inputFormatters: <TextInputFormatter>[
                                         FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
                                       ],
+                                       onChanged: (value)  {// Den String bereinigen: Währungssymbol und Eurozeichen entfernen
+  String cleanedValue = value.replaceAll('€', '');
+  cleanedValue=cleanedValue.replaceAll(',', '.');
+
+
+  // Versuche den bereinigten String in eine Dezimalzahl umzuwandeln
+  double parsedValue = double.tryParse(cleanedValue) ?? 0.0;
+
+
+  // Weise den Wert der Variable einnahmen zu
+  ausgaben = parsedValue; },  
                                       focusNode: _model.textFieldFocusNode2,
                                       autofocus: true,
                                       obscureText: false,
@@ -341,9 +362,9 @@ void _incrementCounter(int x) {
                                         .secondaryBackground,
                                     size: 24,
                                   ),
-                                  onPressed: () async {
-                                    //TODO: Add action to save data
-                                  },
+                                   onPressed: () async {
+        // Hier wird die Methode verrechnen() aufgerufen
+        verrechnen();}
                                 ),
                               ),
                             ),
