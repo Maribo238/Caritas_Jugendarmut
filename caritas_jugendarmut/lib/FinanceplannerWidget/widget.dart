@@ -15,13 +15,13 @@ class FinanzplanerWidget extends StatefulWidget {
 class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
     with TickerProviderStateMixin {
   late FinanzplanerModel _model;
-double selectedValue = 50;
-double einnahmen = 0;
-double ausgaben = 0;
-void verrechnen() {
+  double selectedValue = 50;
+  double einnahmen = 0;
+  double ausgaben = 0;
+  void verrechnen() {
     setState(() {
-      selectedValue= selectedValue + einnahmen - ausgaben;
-      selectedValue =  double.parse(selectedValue.toStringAsFixed(2));
+      selectedValue = selectedValue + einnahmen - ausgaben;
+      selectedValue = double.parse(selectedValue.toStringAsFixed(2));
     });
   }
 
@@ -159,22 +159,28 @@ void verrechnen() {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         20, 0, 20, 0),
                                     child: TextFormField(
-                                      keyboardType: TextInputType.numberWithOptions(
-                                          decimal: true),
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
+                                              decimal: true),
                                       inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d+,?(\d{1,2})?€?$'))
                                       ],
-                                      onChanged: (value) {// Den String bereinigen: Währungssymbol und Eurozeichen entfernen
-  String cleanedValue = value.replaceAll('€', '');
-  cleanedValue=cleanedValue.replaceAll(',', '.');
+                                      onChanged: (value) {
+                                        // Den String bereinigen: Währungssymbol und Eurozeichen entfernen
+                                        String cleanedValue =
+                                            value.replaceAll('€', '');
+                                        cleanedValue =
+                                            cleanedValue.replaceAll(',', '.');
 
+                                        // Versuche den bereinigten String in eine Dezimalzahl umzuwandeln
+                                        double parsedValue =
+                                            double.tryParse(cleanedValue) ??
+                                                0.0;
 
-  // Versuche den bereinigten String in eine Dezimalzahl umzuwandeln
-  double parsedValue = double.tryParse(cleanedValue) ?? 0.0;
-
-
-  // Weise den Wert der Variable einnahmen zu
-  einnahmen = parsedValue; }, 
+                                        // Weise den Wert der Variable einnahmen zu
+                                        einnahmen = parsedValue;
+                                      },
                                       controller: _model.textController1,
                                       focusNode: _model.textFieldFocusNode1,
                                       autofocus: true,
@@ -259,23 +265,29 @@ void verrechnen() {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         20, 30, 20, 0),
                                     child: TextFormField(
-                                      keyboardType: TextInputType.numberWithOptions(
-                                          decimal: true),
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
+                                              decimal: true),
                                       controller: _model.textController2,
                                       inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d+,?(\d{1,2})?€?$'))
                                       ],
-                                       onChanged: (value)  {// Den String bereinigen: Währungssymbol und Eurozeichen entfernen
-  String cleanedValue = value.replaceAll('€', '');
-  cleanedValue=cleanedValue.replaceAll(',', '.');
+                                      onChanged: (value) {
+                                        // Den String bereinigen: Währungssymbol und Eurozeichen entfernen
+                                        String cleanedValue =
+                                            value.replaceAll('€', '');
+                                        cleanedValue =
+                                            cleanedValue.replaceAll(',', '.');
 
+                                        // Versuche den bereinigten String in eine Dezimalzahl umzuwandeln
+                                        double parsedValue =
+                                            double.tryParse(cleanedValue) ??
+                                                0.0;
 
-  // Versuche den bereinigten String in eine Dezimalzahl umzuwandeln
-  double parsedValue = double.tryParse(cleanedValue) ?? 0.0;
-
-
-  // Weise den Wert der Variable einnahmen zu
-  ausgaben = parsedValue; },  
+                                        // Weise den Wert der Variable einnahmen zu
+                                        ausgaben = parsedValue;
+                                      },
                                       focusNode: _model.textFieldFocusNode2,
                                       autofocus: true,
                                       obscureText: false,
@@ -352,22 +364,22 @@ void verrechnen() {
                               alignment: AlignmentDirectional(1, 0),
                               child: Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                   0, 20, 20, 0),
+                                    0, 20, 20, 0),
                                 child: FlutterFlowIconButton(
-                                  borderRadius: 20,
-                                  borderWidth: 1,
-                                  buttonSize: 60,
-                                  fillColor: Color(0xFF097070),
-                                  icon: Icon(
-                                    Icons.check,
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                    size: 24,
-                                  ),
-                                   onPressed: () async {
-        // Hier wird die Methode verrechnen() aufgerufen
-        verrechnen();}
-                                ),
+                                    borderRadius: 20,
+                                    borderWidth: 1,
+                                    buttonSize: 60,
+                                    fillColor: Color(0xFF097070),
+                                    icon: Icon(
+                                      Icons.check,
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      size: 24,
+                                    ),
+                                    onPressed: () async {
+                                      // Hier wird die Methode verrechnen() aufgerufen
+                                      verrechnen();
+                                    }),
                               ),
                             ),
                           ],
