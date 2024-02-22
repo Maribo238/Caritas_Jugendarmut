@@ -5,34 +5,54 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 
-
-class FinanceplannerWidget extends StatefulWidget {
-  const FinanceplannerWidget({super.key});
+class FinanzplanerWidget extends StatefulWidget {
+  const FinanzplanerWidget({super.key});
 
   @override
-  State<FinanceplannerWidget> createState() => _FinanceplannerWidgetState();
+  State<FinanzplanerWidget> createState() => _FinanzplanerWidgetState();
 }
 
-class _FinanceplannerWidgetState extends State<FinanceplannerWidget> {
-  late FinanceplannerModel _model;
-  int _selectedIndex = 110;
-void _incrementCounter() {
+class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
+    with TickerProviderStateMixin {
+  late FinanzplanerModel _model;
+int selectedValue = 50;
+void _incrementCounter(int x) {
     setState(() {
-      _selectedIndex++;
+      selectedValue= selectedValue + x;
     });
   }
-  void _decrementCounter() {
+  void _decrementCounter(int x) {
     setState(() {
-      _selectedIndex--;
+      selectedValue= selectedValue - x;
     });
   }
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  final animationsMap = {
+    'containerOnPageLoadAnimation': AnimationInfo(
+      trigger: AnimationTrigger.onPageLoad,
+      effects: [
+        //FadeEffect(
+        //curve: Curves.easeInOut,
+        //delay: 0.ms,
+        //duration: 1000.ms,
+        //begin: 0,
+        //end: 1,
+        //),
+      ],
+    ),
+  };
+
   @override
   void initState() {
     super.initState();
+    _model = createModel(context, () => FinanzplanerModel());
 
-    _model = createModel(context, () => FinanceplannerModel());
+    _model.textController1 ??= TextEditingController();
+    _model.textFieldFocusNode1 ??= FocusNode();
+
+    _model.textController2 ??= TextEditingController();
+    _model.textFieldFocusNode2 ??= FocusNode();
   }
 
   @override
@@ -59,12 +79,12 @@ void _incrementCounter() {
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        backgroundColor: Color(0xFFD5BA98),
         appBar: AppBar(
           backgroundColor: Color(0xFFD5B896),
           automaticallyImplyLeading: false,
           title: Text(
-            'Finance Planner',
+            'Finanzplaner',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Outfit',
                   color: Colors.white,
@@ -79,132 +99,259 @@ void _incrementCounter() {
           top: true,
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 250,
-                height: 250,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Color(0xFF097070),
-                    width: 4,
+              Opacity(
+                opacity: 0.8,
+                child: Container(
+                  width: 396,
+                  height: 750,
+                  decoration: BoxDecoration(
+                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: Image.network(
+                        'https://images.unsplash.com/photo-1579621970795-87facc2f976d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHw2fHxtb25leXxlbnwwfHx8fDE3MDc5OTAxNzN8MA&ixlib=rb-4.0.3&q=80&w=1080',
+                      ).image,
+                    ),
                   ),
-                ),
-                child: Align(
-                  alignment: AlignmentDirectional(0, 0),
-                  child: Text(
-                    '$_selectedIndex',
-                    style: FlutterFlowTheme.of(context).displayLarge.override(
-                          fontFamily: 'Outfit',
-                          fontSize: 50,
+                  child: Padding(
+                    padding: EdgeInsets.all(6),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 80),
+                          child: Container(
+                            width: 250,
+                            height: 250,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                width: 6,
+                              ),
+                            ),
+                            child: Align(
+                              alignment: AlignmentDirectional(0, 0),
+                              child: Text('$selectedValue' + '€',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    color: Colors.white,
+                                    fontSize: 50,
+                                    fontWeight: FontWeight.w800,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.white,
+                                  )),
+                            ),
+                          ).animateOnPageLoad(
+                              animationsMap['containerOnPageLoadAnimation']!),
                         ),
+                        Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        20, 0, 20, 0),
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: <TextInputFormatter>[
+                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
+                                      ],
+                                      controller: _model.textController1,
+                                      focusNode: _model.textFieldFocusNode1,
+                                      autofocus: true,
+                                      obscureText: false,
+                                      decoration: InputDecoration(
+                                        labelText: 'Einnahmen',
+                                        labelStyle: FlutterFlowTheme.of(context)
+                                            .labelMedium
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                        hintStyle: FlutterFlowTheme.of(context)
+                                            .labelMedium
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              color: Color(0xFF097070),
+                                            ),
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .alternate,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .primary,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        errorBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .error,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        focusedErrorBorder:
+                                            UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .error,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        filled: true,
+                                      ),
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                      validator: _model.textController1Validator
+                                          .asValidator(context),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        20, 30, 20, 0),
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                      controller: _model.textController2,
+                                      inputFormatters: <TextInputFormatter>[
+                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
+                                      ],
+                                      focusNode: _model.textFieldFocusNode2,
+                                      autofocus: true,
+                                      obscureText: false,
+                                      decoration: InputDecoration(
+                                        labelText: 'Ausgaben',
+                                        labelStyle: FlutterFlowTheme.of(context)
+                                            .labelMedium
+                                            .override(
+                                              fontFamily: 'Readex Pro',
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                        alignLabelWithHint: false,
+                                        hintStyle: FlutterFlowTheme.of(context)
+                                            .labelMedium,
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .alternate,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .primary,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        errorBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .error,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        focusedErrorBorder:
+                                            UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: FlutterFlowTheme.of(context)
+                                                .error,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        filled: true,
+                                      ),
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: 'Readex Pro',
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                      validator: _model.textController2Validator
+                                          .asValidator(context),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(1, 0),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                   0, 20, 20, 0),
+                                child: FlutterFlowIconButton(
+                                  borderRadius: 20,
+                                  borderWidth: 1,
+                                  buttonSize: 60,
+                                  fillColor: Color(0xFF097070),
+                                  icon: Icon(
+                                    Icons.check,
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
+                                    size: 24,
+                                  ),
+                                  onPressed: () async {
+                                    //TODO: Add action to save data
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Align(
-                                alignment: AlignmentDirectional(0, 0),
-                                child: FFButtonWidget(
-                                  onPressed: () {
-                                    _incrementCounter();
-                                  
-                                  },
-                                  text: '+',
-                                  options: FFButtonOptions(
-                                    width: 100,
-                                    height: 60,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 0, 0, 0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 0, 0, 0),
-                                    color: Color(0xFFD5B896),
-                                    textStyle: FlutterFlowTheme.of(context)
-                                        .titleSmall
-                                        .override(
-                                          fontFamily: 'Readex Pro',
-                                          color: Colors.white,
-                                        ),
-                                    elevation: 0,
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                'add',
-                                style: FlutterFlowTheme.of(context).bodyMedium,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Align(
-                                alignment: AlignmentDirectional(-1, 0),
-                                child: FFButtonWidget(
-                                  onPressed: () {
-                                    _decrementCounter();
-                                  },
-                                  text: '-',
-                                  options: FFButtonOptions(
-                                    width: 100,
-                                    height: 60,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 0, 0, 0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 0, 0, 0),
-                                    color: Color(0xFFD5B896),
-                                    textStyle: FlutterFlowTheme.of(context)
-                                        .titleSmall
-                                        .override(
-                                          fontFamily: 'Readex Pro',
-                                          color: Colors.white,
-                                        ),
-                                    elevation: 0,
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                'Remove',
-                                style: FlutterFlowTheme.of(context).bodyMedium,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ],
