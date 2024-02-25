@@ -1,7 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:home_widget/home_widget.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  //Set AppGroupId this is essential to share data between app and widget for ios
+  //await HomeWidget.setAppGroupId('group.com.example.app');
+  await HomeWidget.registerInteractivityCallback(interactiveCallback);
   runApp(const MyApp());
+}
+
+/// Callback invoked by HomeWidget Plugin when performing interactive actions
+/// The @pragma('vm:entry-point') Notification is required so that the Plugin can find it
+@pragma('vm:entry-point')
+Future<void> interactiveCallback(Uri? uri) async {
+  //Groupid muss hier auch gesetzt werden
+  // We check the host of the uri to determine which action should be triggered.
+  if (uri?.host == 'increment') {
+    await _increment();
+  } else if (uri?.host == 'clear') {
+    await _clear();
+  }
+}
+
+const _countKey = 'counter';
+
+/// Gets the currently stored Value
+Future<int> get _value async {
+  final value = await HomeWidget.getWidgetData<int>(_countKey, defaultValue: 0);
+  return value!;
+}
+
+// Retrieves the current stored value
+/// Increments it by one
+/// Saves that new value
+/// @returns the new saved value
+Future<int> _increment() async {
+  final oldValue = await _value;
+  final newValue = oldValue + 1;
+  await _sendAndUpdate(newValue);
+  return newValue;
+}
+
+/// Clears the saved Counter Value
+Future<void> _clear() async {
+  await _sendAndUpdate(null);
+}
+
+/// Stores [value] in the Widget Configuration
+Future<void> _sendAndUpdate([int? value]) async {
+  await HomeWidget.saveWidgetData(_countKey, value);
+  await HomeWidget.updateWidget(
+    iOSName: 'HomeWidget',
+    androidName: 'HomeWidget',
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,7 +79,8 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 240, 187, 90)),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -54,63 +106,62 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  Future<void> _incrementCounter() async {
+    await _increment();
+    setState(() {});
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            //Insert new Feature Updating the Counter from the Widget
+            FutureBuilder<int>(
+              future: _value,
+              builder: (_, snaphot) => Text(
+                (snaphot.data ?? 0).toString(),
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+
+            //Insert new Feature Clearing the Counter from the Widget
+            TextButton(
+              onPressed: () async {
+                await _clear();
+                setState(() {});
+              },
+              child: const Text('Clear'),
             ),
           ],
         ),
