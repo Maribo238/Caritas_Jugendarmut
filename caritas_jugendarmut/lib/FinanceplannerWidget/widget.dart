@@ -165,7 +165,7 @@ void verrechnen() {
                                       keyboardType: TextInputType.numberWithOptions(
                                           decimal: true),
                                       inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.allow(RegExp(r'^\d*(,|.)?(\d{1,2})?€?$'))
+                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+(,|\.)?(\d{1,2})?€?'))
                                       ],
                                       onChanged: (value) {// Den String bereinigen: Währungssymbol und Eurozeichen entfernen
                                       String cleanedValue = value.replaceAll('€', '').replaceAll(',', '.');
@@ -272,7 +272,7 @@ void verrechnen() {
                                           decimal: true),
                                       controller: _model.textController2,
                                       inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+(,|.)?(\d{1,2})?€?$'))
+                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+(,|\.)?(\d{1,2})?€?'))
                                       ],
                                        onChanged: (value)  {// Den String bereinigen: Währungssymbol und Eurozeichen entfernen
   String cleanedValue = value.replaceAll('€', '');
