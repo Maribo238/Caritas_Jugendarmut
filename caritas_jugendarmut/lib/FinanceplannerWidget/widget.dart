@@ -79,42 +79,43 @@ void verrechnen() {
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: Color(0xFFD5BA98),
-        appBar: AppBar(
-          backgroundColor: Color(0xFFD5B896),
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Finanzplaner',
-            style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  fontFamily: 'Outfit',
-                  color: Colors.white,
-                  fontSize: 22,
-                ),
-          ),
-          actions: [],
-          centerTitle: true,
-          elevation: 2,
+  key: scaffoldKey,
+  backgroundColor: Color(0xFFD5BA98),
+  appBar: PreferredSize(
+    preferredSize: Size.fromHeight(60), // Hier können Sie die Höhe der AppBar festlegen
+    child: AppBar(
+      backgroundColor: Color(0xFFD5B896),
+      automaticallyImplyLeading: false,
+      title: Text(
+        'Finanzplaner',
+        style: FlutterFlowTheme.of(context).headlineMedium.override(
+          fontFamily: 'Outfit',
+          color: Colors.white,
+          fontSize: 22,
         ),
-        body: SafeArea(
-          top: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Opacity(
-                opacity: 0.8,
-                child: Container(
-                  width: 396,
-                  height: 750,
-                  decoration: BoxDecoration(
-                    color: FlutterFlowTheme.of(context).secondaryBackground,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: Image.network(
-                        'https://images.unsplash.com/photo-1579621970795-87facc2f976d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHw2fHxtb25leXxlbnwwfHx8fDE3MDc5OTAxNzN8MA&ixlib=rb-4.0.3&q=80&w=1080',
-                      ).image,
-                    ),
-                  ),
+      ),
+      actions: [],
+      centerTitle: true,
+      elevation: 2,
+    ),
+  ),
+  body: SafeArea(
+    top: true,
+    child: Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Expanded(
+          child: Opacity(
+            opacity: 0.8,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.of(context).secondaryBackground,
+                image: DecorationImage( 
+                  image: AssetImage('hintergrund.jpeg'), // Pfad zum lokalen Hintergrundbild
+                  fit: BoxFit.cover, // Anpassen des Bildes
+                ),
+              ),
                   child: Padding(
                     padding: EdgeInsets.all(6),
                     child: Column(
@@ -164,7 +165,7 @@ void verrechnen() {
                                       keyboardType: TextInputType.numberWithOptions(
                                           decimal: true),
                                       inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.allow(RegExp(r'^\d*,?(\d{1,2})?€?$'))
+                                        FilteringTextInputFormatter.allow(RegExp(r'^\d*(,|.)?(\d{1,2})?€?$'))
                                       ],
                                       onChanged: (value) {// Den String bereinigen: Währungssymbol und Eurozeichen entfernen
                                       String cleanedValue = value.replaceAll('€', '').replaceAll(',', '.');
@@ -271,7 +272,7 @@ void verrechnen() {
                                           decimal: true),
                                       controller: _model.textController2,
                                       inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+,?(\d{1,2})?€?$'))
+                                        FilteringTextInputFormatter.allow(RegExp(r'^\d+(,|.)?(\d{1,2})?€?$'))
                                       ],
                                        onChanged: (value)  {// Den String bereinigen: Währungssymbol und Eurozeichen entfernen
   String cleanedValue = value.replaceAll('€', '');
@@ -396,6 +397,7 @@ void verrechnen() {
                   ),
                 ),
               ),
+        ),
             ],
           ),
         ),
