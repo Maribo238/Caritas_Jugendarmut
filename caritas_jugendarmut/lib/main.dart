@@ -3,8 +3,7 @@ import 'package:home_widget/home_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //Set AppGroupId this is essential to share data between app and widget for ios
-  //await HomeWidget.setAppGroupId('group.com.example.app');
+  await HomeWidget.setAppGroupId('group.es.antonborri.homeWidgetCounter');
   await HomeWidget.registerInteractivityCallback(interactiveCallback);
   runApp(const MyApp());
 }
@@ -13,7 +12,8 @@ Future<void> main() async {
 /// The @pragma('vm:entry-point') Notification is required so that the Plugin can find it
 @pragma('vm:entry-point')
 Future<void> interactiveCallback(Uri? uri) async {
-  //Groupid muss hier auch gesetzt werden
+  await HomeWidget.setAppGroupId('group.es.antonborri.homeWidgetCounter');
+
   // We check the host of the uri to determine which action should be triggered.
   if (uri?.host == 'increment') {
     await _increment();
