@@ -6,10 +6,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class FinanzplanerWidget extends StatefulWidget {
-  const FinanzplanerWidget({super.key});
+  const FinanzplanerWidget({Key? key}) : super(key: key);
 
   @override
   State<FinanzplanerWidget> createState() => _FinanzplanerWidgetState();
+}
+
+class FinanzplanerWidgetNotifier extends ChangeNotifier {
+  static final FinanzplanerWidgetNotifier _instance =
+      FinanzplanerWidgetNotifier._internal();
+  factory FinanzplanerWidgetNotifier() => _instance;
+  late double decreaseValue = 0.0;
+
+  FinanzplanerWidgetNotifier._internal() {
+    // init things inside this
+  }
+
+  void decrease(double widgetValue) {
+    decreaseValue = widgetValue;
+    notifyListeners();
+  }
 }
 
 class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
@@ -20,7 +36,6 @@ class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
   double ausgaben = 0;
 
   Future<void> decrease(double widgetValue) async {
-    print('test');
     double value = await _value - widgetValue;
     value = double.parse(value.toStringAsFixed(2));
     sendAndUpdateWidget(value);
@@ -73,7 +88,6 @@ class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
 
   @override
   void initState() {
-    super.initState();
     verrechnen();
     _model = createModel(context, () => FinanzplanerModel());
 
@@ -82,6 +96,10 @@ class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
 
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
+    FinanzplanerWidgetNotifier().addListener(() {
+      decrease(FinanzplanerWidgetNotifier().decreaseValue);
+    });
+    super.initState();
   }
 
   @override
@@ -449,7 +467,7 @@ class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
                                             ''; // Leert das Eingabefeld für Einnahmen
                                         _model.textController2.text =
                                             ''; // Leert das Eingabefeld für Ausgaben
-                                     }),
+                                      }),
                                 ),
                               ),
                             ],
