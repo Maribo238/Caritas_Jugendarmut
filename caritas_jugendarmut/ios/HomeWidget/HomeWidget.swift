@@ -10,7 +10,7 @@ struct Provider: TimelineProvider {
     // Get the UserDefaults for the AppGroup
     let prefs = UserDefaults(suiteName: "group.com.example.caritasJugendarmut")
     // Load the current Count
-    let entry = CounterEntry(date: Date(), count: prefs?.integer(forKey: "amount") ?? 0)
+    let entry = CounterEntry(date: Date(), count: prefs?.double(forKey: "amount") ?? 0)
     completion(entry)
   }
 
@@ -24,7 +24,7 @@ struct Provider: TimelineProvider {
 
 struct CounterEntry: TimelineEntry {
   let date: Date
-  let count: Int
+  let count: Double
 }
 
 struct MoneyButton: View {
@@ -32,8 +32,11 @@ struct MoneyButton: View {
 
     var body: some View {
         Button(intent: BackgroundIntent(method: "\(amount)")) {
-            Text("\(amount) €")
+            Text("\(amount) €").foregroundColor(.white).padding(3)
         }
+        .background(Color(#colorLiteral(red: 0.8352941176470589, green: 0.7294117647058823, blue: 0.596078431372549, alpha: 1)))
+        .foregroundColor(.white)
+        .cornerRadius(10).buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -42,10 +45,9 @@ struct FlutterIOSWidgetEntryView : View {
     
     var body: some View {
          VStack {
-            Text("Total Amount:")
-            Text("\(entry.count) €")
+            Text("Aktueller Betrag:").font(.footnote).padding(.bottom, 5)
+            Text(String(format: "%.2f", entry.count) + " €")
             
-            // Add your buttons here
             HStack {
                 MoneyButton(amount: 1)
                 MoneyButton(amount: 2)
