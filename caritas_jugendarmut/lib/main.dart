@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-
+import 'package:home_widget/home_widget.dart';
 import 'package:caritas_jugendarmut/FinanceplannerWidget/widget.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
+
+  await HomeWidget.setAppGroupId('group.com.example.caritasJugendarmut');
+  await HomeWidget.registerInteractivityCallback(interactiveCallback);
+}
+
+@pragma('vm:entry-point')
+Future<void> interactiveCallback(Uri? uri) async {
+  print('Received Uri: $uri');
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Nexa',
-      home: const FinanzplanerWidget(),
+      home: FinanzplanerWidget(),
     );
   }
 }

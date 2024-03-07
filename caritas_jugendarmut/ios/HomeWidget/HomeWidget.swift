@@ -1,80 +1,75 @@
-//
-//  HomeWidget.swift
-//  HomeWidget
-//
-//  Created by Jan Schiffer on 08.02.24.
-//
-
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
 struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), emoji: "😀")
+  func placeholder(in context: Context) -> CounterEntry {
+    CounterEntry(date: Date(), count: 0)
+  }
+
+  func getSnapshot(in context: Context, completion: @escaping (CounterEntry) -> Void) {
+    // Get the UserDefaults for the AppGroup
+    let prefs = UserDefaults(suiteName: "group.com.example.caritasJugendarmut")
+    // Load the current Count
+    let entry = CounterEntry(date: Date(), count: prefs?.integer(forKey: "amount") ?? 0)
+    completion(entry)
+  }
+
+  func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
+    getSnapshot(in: context) { (entry) in
+      let timeline = Timeline(entries: [entry], policy: .atEnd)
+      completion(timeline)
     }
-
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), emoji: "😀")
-        completion(entry)
-    }
-
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, emoji: "😀")
-            entries.append(entry)
-        }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
-    }
+  }
 }
 
-struct SimpleEntry: TimelineEntry {
-    let date: Date
-    let emoji: String
+struct CounterEntry: TimelineEntry {
+  let date: Date
+  let count: Int
 }
 
-struct HomeWidgetEntryView : View {
-    var entry: Provider.Entry
+struct MoneyButton: View {
+    let amount: Int
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
+        Button(intent: BackgroundIntent(method: "\(amount)")) {
+            Text("\(amount) €")
+        }
+    }
+}
 
-            Text("Emoji:")
-            Text(entry.emoji)
+struct FlutterIOSWidgetEntryView : View {
+    var entry: Provider.Entry
+    
+    var body: some View {
+         VStack {
+            Text("Total Amount:")
+            Text("\(entry.count) €")
+            
+            // Add your buttons here
+            HStack {
+                MoneyButton(amount: 1)
+                MoneyButton(amount: 2)
+                MoneyButton(amount: 5)
+            }
         }
     }
 }
 
 struct HomeWidget: Widget {
-    let kind: String = "HomeWidget"
+  let kind: String = "HomeWidget"
 
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            if #available(iOS 17.0, *) {
-                HomeWidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
-            } else {
-                HomeWidgetEntryView(entry: entry)
-                    .padding()
-                    .background()
-            }
-        }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: kind, provider: Provider()) { entry in
+      if #available(iOS 17.0, *) {
+        FlutterIOSWidgetEntryView(entry: entry)
+          .containerBackground(.fill.tertiary, for: .widget)
+      } else {
+        FlutterIOSWidgetEntryView(entry: entry)
+          .padding()
+          .background()
+      }
     }
-}
-
-#Preview(as: .systemSmall) {
-    HomeWidget()
-} timeline: {
-    SimpleEntry(date: .now, emoji: "😀")
-    SimpleEntry(date: .now, emoji: "🤩")
+    .configurationDisplayName("Home Widget")
+    .description("Easy way to track your outgoings.")
+  }
 }
