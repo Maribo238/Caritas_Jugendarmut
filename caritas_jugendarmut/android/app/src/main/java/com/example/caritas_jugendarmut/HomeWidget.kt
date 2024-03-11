@@ -14,86 +14,63 @@ import io.flutter.Log
 /** Implementation of App Widget functionality. */
 class HomeWidget : HomeWidgetProvider() {
 
-        override fun onUpdate(
-                        context: Context,
-                        appWidgetManager: AppWidgetManager,
-                        appWidgetIds: IntArray,
-                        widgetData: SharedPreferences
-        ) {
-                // There may be multiple widgets active, so update all of them
-                appWidgetIds.forEach { widgetId ->
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray,
+        widgetData: SharedPreferences
+    ) {
+        // There may be multiple widgets active, so update all of them
+        appWidgetIds.forEach { widgetId ->
 
-                        // Add the click listener to the button
-                        val views =
-                                        RemoteViews(context.packageName, R.layout.home_widget)
-                                                        .apply {
-                                                                val count =
-                                                                                widgetData.getInt(
-                                                                                                "counter",
-                                                                                                0
-                                                                                )
-                                                                setTextViewText(
-                                                                                R.id.titleText,
-                                                                                count.toString()
-                                                                )
+            // Add the click listener to the button
+            val views = RemoteViews(context.packageName, R.layout.home_widget).apply {
+                val count = widgetData.getLong(
+                    "amount", 0L
+                )
 
-                                                                val incrementIntent =
-                                                                                HomeWidgetBackgroundIntent
-                                                                                                .getBroadcast(
-                                                                                                                context,
-                                                                                                                Uri.parse(
-                                                                                                                                "homeWidgetCounter://increment"
-                                                                                                                )
-                                                                                                )
+                setTextViewText(
+                    R.id.titleText, count.toString()
+                )
 
-                                                                val clearIntent =
-                                                                                HomeWidgetBackgroundIntent
-                                                                                                .getBroadcast(
-                                                                                                                context,
-                                                                                                                Uri.parse(
-                                                                                                                                "homeWidgetCounter://clear"
-                                                                                                                )
-                                                                                                )
+                val incrementIntent1 = HomeWidgetBackgroundIntent.getBroadcast(
+                    context,
+                    Uri.parse(
+                        "homeWidgetCounter://1"
+                    )
+                )
 
-                                                                val intent =
-                                                                                Intent(
-                                                                                                context,
-                                                                                                MainActivity::class
-                                                                                                                .java
-                                                                                )
-                                                                intent.action =
-                                                                                "com.example.home_widget.PEN_CLICKED"
-                                                                val pendingIntent =
-                                                                                PendingIntent.getBroadcast(
-                                                                                                context,
-                                                                                                0,
-                                                                                                intent,
-                                                                                                PendingIntent.FLAG_UPDATE_CURRENT
-                                                                                )
+                val incrementIntet2 = HomeWidgetBackgroundIntent.getBroadcast(
+                    context,
+                    Uri.parse(
+                        "homeWidgetCounter://2"
+                    )
+                )
 
-                                                                setOnClickPendingIntent(
-                                                                                R.id.button_2,
-                                                                                pendingIntent
-                                                                )
-                                                                setOnClickPendingIntent(
-                                                                                R.id.button_1,
-                                                                                incrementIntent
-                                                                )
-                                                                setOnClickPendingIntent(
-                                                                                R.id.button_5,
-                                                                                clearIntent
-                                                                )
-                                                        }
-                        appWidgetManager.updateAppWidget(widgetId, views)
-                }
+                val incrementIntent5 = HomeWidgetBackgroundIntent.getBroadcast(
+                    context,
+                    Uri.parse(
+                        "homeWidgetCounter://5"
+                    )
+                )
+
+                val intent = Intent(
+                    context,
+                    MainActivity::class.java
+                )
+
+                setOnClickPendingIntent(
+                    R.id.button_2, incrementIntet2
+                )
+                setOnClickPendingIntent(
+                    R.id.button_1, incrementIntent1
+                )
+                setOnClickPendingIntent(
+                    R.id.button_5, incrementIntent5
+                )
+            }
+            appWidgetManager.updateAppWidget(widgetId, views)
         }
+    }
 
-        override fun onReceive(context: Context, intent: Intent) {
-                super.onReceive(context, intent)
-
-                if (intent.action == "com.example.mywidget.PEN_CLICKED") {
-                        // Stiftsymbol wurde geklickt
-                        Log.d("MyWidgetProvider", "Stiftsymbol wurde geklickt!")
-                }
-        }
 }
