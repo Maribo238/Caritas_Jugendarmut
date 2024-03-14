@@ -192,7 +192,7 @@ class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
                                       style: TextStyle(
                                         fontFamily: 'Outfit',
                                         color: Colors.white,
-                                        fontSize: 50,
+                                        fontSize: 45,
                                         fontWeight: FontWeight.w800,
                                         decoration: TextDecoration.underline,
                                         decorationColor: Colors.white,
@@ -247,9 +247,7 @@ class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
                                                   .labelMedium
                                                   .override(
                                                     fontFamily: 'Readex Pro',
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .secondaryBackground,
+                                                    color: Colors.black,
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -373,9 +371,7 @@ class _FinanzplanerWidgetState extends State<FinanzplanerWidget>
                                                   .labelMedium
                                                   .override(
                                                     fontFamily: 'Readex Pro',
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .secondaryBackground,
+                                                    color: Colors.black,
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
                                                   ),
