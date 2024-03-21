@@ -4,12 +4,13 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="caritas_jugendarmut">
+        android:label="Nexa">
         <receiver
             android:name=".HomeWidget"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.ICREMENT_CLICKED"/>
             </intent-filter>
 
             <meta-data

@@ -1,19 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Widget.Android.AppWidget.Container"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.Android.AppWidgetContainer">
+    android:background="#FFFFFF">
 
-    <TextView
-        android:id="@+id/appwidget_text"
-        style="@style/Widget.Android.AppWidget.InnerView"
-        android:layout_width="wrap_content"
+    <!-- Oberer Navigationsbalken -->
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="8dp"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
+        android:background="#D2B48C"
+        android:orientation="horizontal">
+
+        <!-- Zurück-Pfeil -->
+
+        <!-- Titel -->
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="57dp"
+            android:layout_height="56dp"
+            android:background="#D1B38B"
+            android:clickable="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/arrow_back"/>
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="0sp"
+            android:layout_height="10sp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:text="List"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="36dp"
+            android:layout_height="23dp"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:text="Liste"
+            android:textColor="#FEFEFE"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:translationX="-30sp"
+            android:translationY="20sp"
+            android:typeface="normal" />
+    </LinearLayout>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBar"
+        android:columnCount="3"
+        android:rowCount="1">
+
+        <!-- Button 1 -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="99dp"
+            android:layout_below="@id/topBar"
+            android:columnCount="3"
+            android:rowCount="1">
+
+
+            <Button
+                android:id="@+id/button_1"
+                android:layout_width="0dp"
+                android:layout_height="67dp"
+                android:layout_columnWeight="1"
+                android:background="#D2B48C"
+                android:text="1€"
+                android:textColor="#FEFEFE"
+                android:translationY="10sp" />
+
+
+            <Button
+                android:id="@+id/button_2"
+                android:layout_width="0dp"
+                android:layout_height="67dp"
+                android:layout_row="0"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:background="#D2B48C"
+                android:fadingEdge="horizontal|vertical"
+                android:fadingEdgeLength="4sp"
+                android:text="2€"
+                android:textColor="#FEFEFE"
+                android:translationY="10sp" />
+
+            <Button
+                android:id="@+id/button_5"
+                android:layout_width="0dp"
+                android:layout_height="67dp"
+                android:layout_row="0"
+                android:layout_column="2"
+                android:layout_columnWeight="1"
+                android:background="#D2B48C"
+                android:text="5€"
+                android:textColor="#FEFEFE"
+                android:translationY="10sp" />
+        </GridLayout>
+
+    </GridLayout>
 </RelativeLayout>
